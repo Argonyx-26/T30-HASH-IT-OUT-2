@@ -6,10 +6,18 @@ create table if not exists public.profiles (
   target_career text not null default '',
   weekly_learning_hours integer not null default 0 check (weekly_learning_hours between 0 and 168),
   experience_level text not null default '',
+  resume_data jsonb not null default '{}'::jsonb,
+  daily_task_state jsonb not null default '{"tasks": [], "streak": 0, "lastTaskAt": null}'::jsonb,
   ai_analysis jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles
+  add column if not exists resume_data jsonb not null default '{}'::jsonb;
+
+alter table public.profiles
+  add column if not exists daily_task_state jsonb not null default '{"tasks": [], "streak": 0, "lastTaskAt": null}'::jsonb;
 
 alter table public.profiles
   add column if not exists ai_analysis jsonb not null default '{}'::jsonb;

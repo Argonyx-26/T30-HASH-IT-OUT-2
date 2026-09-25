@@ -6,6 +6,8 @@ import RegisterPage from './pages/RegisterPage';
 import OnboardingPage from './pages/OnboardingPage';
 import DashboardPage from './pages/DashboardPage';
 import ResumePage from './pages/ResumePage';
+import ResumeBuilderPage from './pages/ResumeBuilderPage';
+import InterviewPage from './pages/InterviewPage';
 import SkillsPage from './pages/SkillsPage';
 import CareersPage from './pages/CareersPage';
 import SkillGapPage from './pages/SkillGapPage';
@@ -13,7 +15,7 @@ import RoadmapPage from './pages/RoadmapPage';
 import ProjectsPage from './pages/ProjectsPage';
 import GithubPage from './pages/GithubPage';
 import MentorPage from './pages/MentorPage';
-import ProgressPage from './pages/ProgressPage';
+import SettingsPage from './pages/SettingsPage';
 
 const withLayout = (Component) => (
   <Layout>
@@ -30,6 +32,7 @@ export default function App() {
       <Route path="/onboarding" element={<OnboardingPage />} />
       <Route path="/dashboard" element={withLayout(DashboardPage)} />
       <Route path="/resume" element={withLayout(ResumePage)} />
+      <Route path="/resume-builder" element={withLayout(ResumeBuilderPage)} />
       <Route path="/skills" element={withLayout(SkillsPage)} />
       <Route path="/careers" element={withLayout(CareersPage)} />
       <Route path="/skill-gap" element={withLayout(SkillGapPage)} />
@@ -37,7 +40,8 @@ export default function App() {
       <Route path="/projects" element={withLayout(ProjectsPage)} />
       <Route path="/github" element={withLayout(GithubPage)} />
       <Route path="/mentor" element={withLayout(MentorPage)} />
-      <Route path="/progress" element={withLayout(ProgressPage)} />
+      <Route path="/interview" element={withLayout(InterviewPage)} />
+      <Route path="/settings" element={withLayout(SettingsPage)} />
     </Routes>
   );
 }

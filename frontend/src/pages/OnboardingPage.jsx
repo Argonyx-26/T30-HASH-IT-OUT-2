@@ -9,13 +9,15 @@ const steps = [
   { key: 'targetCareer', title: 'What career are you interested in?', type: 'select', options: ['Software Engineer', 'AI Engineer', 'Data Scientist', 'DevOps Engineer', 'Full Stack Developer', 'Product Engineer', 'Cybersecurity Engineer'] },
   { key: 'learningHours', title: 'How much time can you spend learning per week?', type: 'select', options: ['2', '4', '6', '8', '10', '12', '15', '20'] },
   { key: 'experienceLevel', title: 'What is your experience level?', type: 'select', options: ['Beginner', 'Intermediate', 'Advanced'] },
+  { key: 'profileNotes', title: 'Add other experience, projects, or certifications', type: 'textarea' },
 ];
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [profile, setProfile] = useState({ education: '', educationOther: '', skills: [], targetCareer: '', learningHours: '', experienceLevel: '' });
+  const [profile, setProfile] = useState({ education: '', educationOther: '', skills: [], targetCareer: '', learningHours: '', experienceLevel: '', profileNotes: '', resumeData: {} });
   const [error, setError] = useState('');
+  const [customSkill, setCustomSkill] = useState('');
   const [saving, setSaving] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
   const [resumeMessage, setResumeMessage] = useState('');
@@ -37,6 +39,16 @@ export default function OnboardingPage() {
         return;
       }
 
+      const resumeData = profile.resumeData || {};
+      const savedResumeData = {
+        ...resumeData,
+        summary: [resumeData.summary, profile.profileNotes.trim()].filter(Boolean).join('\n\n'),
+        educationDetails: resumeData.educationDetails || {},
+        skills: profile.skills,
+        workExperience: resumeData.workExperience || [],
+        projects: resumeData.projects || [],
+        certifications: resumeData.certifications || [],
+      };
       const { error: saveError } = await supabase.from('profiles').upsert({
         id: user.id,
         full_name: user.user_metadata?.name || '',
@@ -45,6 +57,8 @@ export default function OnboardingPage() {
         target_career: profile.targetCareer,
         weekly_learning_hours: Number(profile.learningHours) || 0,
         experience_level: profile.experienceLevel,
+        resume_data: savedResumeData,
+        ai_analysis: {},
         updated_at: new Date().toISOString(),
       });
       if (saveError) throw saveError;
@@ -62,7 +76,7 @@ export default function OnboardingPage() {
       setError('Enter what you are studying.');
       return;
     }
-    if (current.key === 'skills' ? answer.length === 0 : !answer) {
+    if (current.key !== 'profileNotes' && (current.key === 'skills' ? answer.length === 0 : !answer)) {
       setError('Choose an option before continuing.');
       return;
     }
@@ -82,6 +96,18 @@ export default function OnboardingPage() {
         : [...currentProfile.skills, skill],
     }));
     setError('');
+  };
+
+  const addCustomSkill = () => {
+    const skill = customSkill.trim();
+    if (!skill) return;
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      skills: currentProfile.skills.some((item) => item.toLowerCase() === skill.toLowerCase())
+        ? currentProfile.skills
+        : [...currentProfile.skills, skill],
+    }));
+    setCustomSkill('');
   };
 
   const handleResumeUpload = async (event) => {
@@ -122,6 +148,7 @@ export default function OnboardingPage() {
         skills: extracted.skills?.length ? extracted.skills : currentProfile.skills,
         targetCareer: extracted.targetCareer || currentProfile.targetCareer,
         experienceLevel: extracted.experienceLevel || currentProfile.experienceLevel,
+        resumeData: result.resumeData || currentProfile.resumeData,
       }));
       setResumeMessage('Resume details imported. Review each choice and fill anything missing.');
     } catch (uploadError) {
@@ -146,7 +173,7 @@ export default function OnboardingPage() {
           <div>
             <p className="font-medium text-white">Resume import <span className="text-sm font-normal text-slate-400">(optional)</span></p>
             <p className="mt-1 text-sm text-slate-400">PDF or DOCX, up to 10 MB</p>
-            <p className="mt-1 text-xs text-slate-500">Resume content is sent to Gemini for extraction and is not saved by this app.</p>
+            <p className="mt-1 text-xs text-slate-500">The original file is not stored; extracted profile details are saved to your account.</p>
           </div>
           <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 font-medium text-white hover:bg-blue-500 ${uploadingResume || saving ? 'pointer-events-none opacity-60' : ''}`}>
             <FileUp size={18} />
@@ -163,23 +190,44 @@ export default function OnboardingPage() {
         <div className="space-y-6">
           <label className="block">
             <span className="mb-3 block text-lg font-medium text-white">{current.title}</span>
-            {current.type === 'multi-select' ? (
-              <details className="group relative">
-                <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 marker:hidden">
-                  <span className={profile.skills.length ? 'text-slate-100' : 'text-slate-400'}>
-                    {profile.skills.length ? `${profile.skills.length} selected` : 'Select technologies'}
-                  </span>
-                  <ChevronDown size={18} className="text-slate-400 transition group-open:rotate-180" />
-                </summary>
-                <div className="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-xl">
-                  {current.options.map((option) => (
-                    <label key={option} className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">
-                      <input type="checkbox" checked={profile.skills.includes(option)} onChange={() => toggleSkill(option)} className="h-4 w-4 accent-blue-500" />
-                      {option}
-                    </label>
-                  ))}
+            {current.type === 'textarea' ? (
+              <textarea
+                value={profile.profileNotes}
+                onChange={(event) => { setProfile({ ...profile, profileNotes: event.target.value }); setError(''); }}
+                className="min-h-36 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+                placeholder="Roles, projects, certifications, or other career details"
+              />
+            ) : current.type === 'multi-select' ? (
+              <>
+                <details className="group relative">
+                  <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 marker:hidden">
+                    <span className={profile.skills.length ? 'text-slate-100' : 'text-slate-400'}>
+                      {profile.skills.length ? `${profile.skills.length} selected` : 'Select technologies'}
+                    </span>
+                    <ChevronDown size={18} className="text-slate-400 transition group-open:rotate-180" />
+                  </summary>
+                  <div className="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-xl">
+                    {current.options.map((option) => (
+                      <label key={option} className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        <input type="checkbox" checked={profile.skills.includes(option)} onChange={() => toggleSkill(option)} className="h-4 w-4 accent-blue-500" />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                </details>
+                <div className="mt-3 flex gap-2">
+                  <input
+                    value={customSkill}
+                    onChange={(event) => setCustomSkill(event.target.value)}
+                    onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addCustomSkill(); } }}
+                    className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100"
+                    placeholder="Add another skill"
+                    aria-label="Add another skill"
+                  />
+                  <button type="button" onClick={addCustomSkill} className="rounded-xl border border-slate-700 px-4 text-slate-200 hover:bg-slate-800">Add</button>
                 </div>
-              </details>
+                {profile.skills.length > 0 && <p className="mt-3 text-sm text-slate-400">Selected: {profile.skills.join(', ')}</p>}
+              </>
             ) : (
               <select required value={profile[current.key]} onChange={(event) => { setProfile({ ...profile, [current.key]: event.target.value }); setError(''); }} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100">
                 <option value="" disabled>Choose an option</option>

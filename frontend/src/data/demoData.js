@@ -122,6 +122,44 @@ export const recommendations = [
   { title: 'Practice system design', reason: 'Interview readiness is below target and system design is often evaluated for advanced roles.', action: 'Review scalable architecture patterns and practice one case per week.' },
 ];
 
+export const demoAnalysis = {
+  summary: 'Your profile already shows a solid foundation in web development and AI-adjacent work. The biggest opportunities are deployment readiness, more polished documentation, and stronger interview preparation for advanced engineering roles.',
+  skillAssessment: [
+    { name: 'JavaScript', level: 'strong', reason: 'You have a consistent frontend and backend foundation across modern JavaScript tooling.' },
+    { name: 'React', level: 'strong', reason: 'Your experience shows strong UI-building habits and component-driven development patterns.' },
+    { name: 'Node.js', level: 'developing', reason: 'Backend work is present, but API depth and deployment workflows still need additional proof.' },
+    { name: 'Machine Learning', level: 'developing', reason: 'You are moving in the right direction, but practical evaluation and deployment are still the main gaps.' },
+    { name: 'Docker', level: 'gap', reason: 'This is a notable missing signal for production-ready AI and software engineering work.' },
+    { name: 'System Design', level: 'gap', reason: 'Interview readiness improves when you practice architecture trade-offs and scaling decisions.' },
+  ],
+  roadmap: roadmap.map((phase, index) => ({
+    title: phase.title,
+    duration: phase.time,
+    objective: phase.description,
+    skills: phase.items,
+    project: phase.project,
+    sequence: index + 1,
+  })),
+  projects: [
+    {
+      title: 'AI Resume Analyzer API',
+      description: 'Build a full-stack resume analysis service that extracts skills and insights from uploaded documents.',
+      skills: ['Node.js', 'REST APIs', 'MongoDB', 'AI APIs', 'Authentication', 'Deployment'],
+    },
+    {
+      title: 'Career Roadmap Dashboard',
+      description: 'Show a dynamic skill progression dashboard with adaptive roadmap updates and user tracking.',
+      skills: ['React', 'UI Design', 'Charts', 'Analytics'],
+    },
+    {
+      title: 'Deployment-Ready ML Service',
+      description: 'Package a small ML project with Docker, CI, and documentation so it is presentation-ready for hiring.',
+      skills: ['Docker', 'Python', 'MLOps', 'FastAPI', 'Documentation'],
+    },
+  ],
+  actions: demoProfile.actions,
+};
+
 export const githubData = {
   repositories: 18,
   languages: 7,

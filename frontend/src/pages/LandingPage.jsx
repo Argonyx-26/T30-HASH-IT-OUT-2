@@ -146,17 +146,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-16">
-          <div className="flex flex-col items-start justify-between gap-5 border-y border-slate-800 py-10 md:flex-row md:items-center">
-            <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-blue-300">AI mentor</p>
-              <h2 className="mt-3 text-2xl font-bold text-white">Get guidance grounded in your profile</h2>
-            </div>
-            <Link to="/mentor" className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-5 py-3 font-medium text-slate-200 hover:border-slate-500">
-              Open AI mentor <ArrowRight size={18} />
-            </Link>
-          </div>
-        </section>
       </main>
 
       <footer className="border-t border-slate-800 bg-slate-950/80">

@@ -1,20 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
-import { BriefcaseBusiness, BrainCircuit, Compass, Gauge, Github, LayoutDashboard, LogOut, Map, NotebookPen, Projector, Rocket, Settings, UserRound } from 'lucide-react';
+import { BrainCircuit, Compass, Gauge, Github, LayoutDashboard, Map, NotebookPen, Projector, Rocket, Settings, UserRound } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'Resume Builder', path: '/resume-builder', icon: NotebookPen },
   { name: 'My Skills', path: '/skills', icon: BrainCircuit },
   { name: 'Career Explorer', path: '/careers', icon: Compass },
   { name: 'Skill Gap', path: '/skill-gap', icon: Gauge },
   { name: 'Roadmap', path: '/roadmap', icon: Map },
   { name: 'Projects', path: '/projects', icon: Projector },
   { name: 'GitHub', path: '/github', icon: Github },
-  { name: 'Resources', path: '/roadmap', icon: NotebookPen },
-  { name: 'Interview', path: '/mentor', icon: Rocket },
+  { name: 'Interview', path: '/interview', icon: Rocket },
   { name: 'AI Mentor', path: '/mentor', icon: UserRound },
-  { name: 'Progress', path: '/progress', icon: BriefcaseBusiness },
-  { name: 'Resume', path: '/resume', icon: NotebookPen },
-  { name: 'Settings', path: '/login', icon: Settings },
+  { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
 export default function Layout({ children }) {
@@ -45,14 +43,6 @@ export default function Layout({ children }) {
             })}
           </nav>
 
-          <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-4">
-            <p className="text-sm text-slate-400">Current plan</p>
-            <p className="mt-2 text-lg font-semibold text-white">AI Engineer</p>
-            <button className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-800 p-2 text-sm text-slate-200">
-              <LogOut size={16} />
-              Logout
-            </button>
-          </div>
         </aside>
 
         <main className="flex-1">{children}</main>

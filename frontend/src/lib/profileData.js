@@ -1,5 +1,16 @@
 import { useEffect, useState } from 'react';
+import { demoAnalysis, demoProfile } from '../data/demoData';
 import { supabase } from './supabase';
+
+const mapDemoProfile = () => ({
+  id: 'demo-user',
+  full_name: demoProfile.name,
+  education: demoProfile.education,
+  skills: demoProfile.skills,
+  target_career: demoProfile.targetCareer,
+  weekly_learning_hours: demoProfile.learningHours,
+  experience_level: demoProfile.experienceLevel,
+});
 
 export function useProfileData(generateAnalysis = false) {
   const [profile, setProfile] = useState(null);
@@ -14,16 +25,21 @@ export function useProfileData(generateAnalysis = false) {
     const load = async () => {
       setLoading(true);
       setError('');
+
       if (!supabase) {
-        setError('Supabase is not configured.');
-        setLoading(false);
+        if (active) {
+          setProfile(mapDemoProfile());
+          setAnalysis(demoAnalysis);
+          setLoading(false);
+        }
         return;
       }
 
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) {
         if (active) {
-          setError('Sign in to view your profile.');
+          setProfile(mapDemoProfile());
+          setAnalysis(demoAnalysis);
           setLoading(false);
         }
         return;
@@ -31,7 +47,7 @@ export function useProfileData(generateAnalysis = false) {
 
       const { data, error: profileError } = await supabase
         .from('profiles')
-        .select('id, full_name, education, skills, target_career, weekly_learning_hours, experience_level, ai_analysis')
+        .select('id, full_name, education, skills, target_career, weekly_learning_hours, experience_level, resume_data, ai_analysis')
         .eq('id', user.id)
         .maybeSingle();
 

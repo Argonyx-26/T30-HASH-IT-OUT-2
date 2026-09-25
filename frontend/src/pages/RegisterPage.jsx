@@ -36,7 +36,7 @@ export default function RegisterPage() {
       if (result.session) {
         const { error: sessionError } = await supabase.auth.setSession(result.session);
         if (sessionError) throw sessionError;
-        navigate('/onboarding');
+        navigate('/dashboard');
       } else {
         setMessage(result.message);
       }
