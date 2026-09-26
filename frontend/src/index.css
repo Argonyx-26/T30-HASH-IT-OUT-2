@@ -12,10 +12,31 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --app-bg: #020817;
+  --app-surface: #0f172a;
+  --app-surface-strong: #111827;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+html.light {
+  --app-bg: #f8fafc;
+  --app-surface: #e2e8f0;
+  --app-surface-strong: #f1f5f9;
+  --app-text: #0f172a;
+  --app-muted: #475569;
+}
+
+html.dark {
+  --app-bg: #020817;
+  --app-surface: #0f172a;
+  --app-surface-strong: #111827;
+  --app-text: #e2e8f0;
+  --app-muted: #94a3b8;
 }
 
 body {
@@ -24,7 +45,9 @@ body {
   background:
     radial-gradient(circle at top, rgba(34, 197, 94, 0.12), transparent 26%),
     radial-gradient(circle at right, rgba(59, 130, 246, 0.15), transparent 26%),
-    #020817;
+    var(--app-bg);
+  color: var(--app-text);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {
@@ -46,4 +69,16 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 9999px;
+}
+
+/* Custom Utilities */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.perspective-1000 {
+  perspective: 1000px;
 }
